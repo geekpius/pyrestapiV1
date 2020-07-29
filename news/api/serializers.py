@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from news.models import Article
+from news.models import Article, Journalist
 from datetime import datetime
 from django.utils.timesince import timesince
 
@@ -7,6 +7,8 @@ from django.utils.timesince import timesince
 class ArticleSerializer(serializers.ModelSerializer):
 
     time_since_publication  = serializers.SerializerMethodField()
+    # author  = JournalistSerializer(read_only=True) # this print all journalist date in json format
+    # author  = serializers.StringRelatedField() # this uses the string method defined in the model of Article
     
     class Meta: 
         model = Article
@@ -38,6 +40,16 @@ class ArticleSerializer(serializers.ModelSerializer):
         return value
 
 
+
+
+
+class JournalistSerializer(serializers.ModelSerializer):
+    articles = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name="news:article-detail")
+    # articles = ArticleSerializer(many=True, read_only=True) #get all articles of this journalist
+
+    class Meta:
+        model = Journalist
+        fields = "__all__"
 
 
 
